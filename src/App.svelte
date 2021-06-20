@@ -1,30 +1,49 @@
 <script>
-	export let name;
+  import { onMount } from "svelte";
+
+  let results;
+  onMount(async () => {
+    await fetch(`https://backend-task-incubate.up.railway.app/getData`)
+      .then((r) => r.json())
+      .then((data) => {
+        results = data;
+      });
+  });
 </script>
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
+{#if results}
+  <table style="width:100%">
+    <tr>
+      <th>Full Name</th>
+      <th>Email</th>
+      <th>Number</th>
+      <th>City</th>
+      <th>Url</th>
+      <th>Team Names</th>
+    </tr>
+    {#each results as result}
+      <tr>
+        <td>
+          {result.full_name}
+        </td>
+        <td>
+          {result.email}
+        </td>
+        <td>
+          {result.number}
+        </td>
+        <td>
+          {result.city}
+        </td>
+        <td>
+          <a href={result.url}>{result.url}</a>
+        </td>
+        {#each result.mydata as data}
+          {data.team_name}
+        {/each}
+      </tr>
+    {/each}
+  </table>
+{:else}
+  <p class="loading">loading...</p>
+{/if}
